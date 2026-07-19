@@ -82,7 +82,7 @@ export default function Layout({ children }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-2" ref={dropdownRef}>
+          <div className="relative flex items-center gap-2" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="w-[34px] h-[34px] rounded-full bg-slate-900 text-white flex items-center justify-center text-[13px] font-semibold border-2 border-transparent hover:opacity-85 transition-opacity cursor-pointer"
@@ -168,7 +168,7 @@ export default function Layout({ children }) {
 
       {/* Main content */}
       <main className="pt-14">
-        <div className="max-w-[760px] mx-auto px-6 py-6">{children}</div>
+        <div className="max-w-[1080px] mx-auto px-6 py-6">{children}</div>
       </main>
     </div>
   );
