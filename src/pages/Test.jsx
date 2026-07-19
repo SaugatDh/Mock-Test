@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo, useReducer } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Layout from "@/components/Layout";
-import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import { Play, Pause } from "lucide-react";
 
 // ── DATA ──
 const LISTENING_AUDIO =
@@ -9,52 +9,13 @@ const LISTENING_AUDIO =
 
 const listeningSections = [
   {
-    title: "Part 1 — Rescheduling a Flight: Initial Options",
-    transcript: `Man With Deep Voice: Ever found yourself scrambling to move a flight, only to realize the new time doesn't quite fit? Today, we're unraveling the drama behind those last-minute travel changes. I'm your host, and joining me is Mr. Davis, who's had his fair share of scheduling headaches.
-
-Upbeat Woman: You know, just when you think you've got your trip sorted, something pops up—like a lunch meeting you completely forgot about. We'll walk listeners through the messy process of shifting flights, wrestling with morning alarms, and the classic, 'wait, can I actually make it?' moment.
-
-Man With Deep Voice: Here's what we're covering: first, how to assess your available options; second, how unexpected commitments can throw your plans off; third, the emotional impact of making tough timing decisions; and finally, practical tips for avoiding these traps next time.
-
-Man With Deep Voice: So, let's start at the beginning. Your original flight was set for Tuesday afternoon—4:15 PM. That seemed fine until you realized Wednesday might be better. But then I suggested an 8:30 AM departure.
-
-Upbeat Woman: Right, and my first reaction was basically dread. The idea of waking up early, plus driving in from way outside the city, wasn't appealing. I immediately asked if there was anything closer to noon. Traveling is stressful enough without adding a pre-dawn scramble.
-
-Man With Deep Voice: That's such a relatable feeling. When you're balancing travel with your home life and commute, those early flights look great on paper, but reality hits hard. So, checking for a 1:45 PM option seemed like the next logical step.`,
+    title: "Flight Change Dialogue",
     questions: [
       { id: 1, q: "What was the original flight time before rescheduling?", options: ["Tuesday at 2:15 PM", "Tuesday at 4:15 PM", "Wednesday at 8:30 AM", "Wednesday at 1:45 PM"], correct: 1, explanation: "The host states the original flight was set for Tuesday afternoon at 4:15 PM." },
       { id: 2, q: "What was the first reaction to the proposed 8:30 AM flight?", options: ["Excitement about arriving early", "Indifference — it didn't matter", "Dread at the idea of waking up so early", "Confusion about the departure date"], correct: 2, explanation: "The speaker says their first reaction was 'basically dread' at the idea of waking up early." },
       { id: 3, q: "What two factors made the early flight unappealing?", options: ["High ticket price and no luggage ready", "Waking up early and driving in from outside the city", "Long airport queue and traffic jam", "No food available and cold weather"], correct: 1, explanation: "The speaker mentions 'waking up early, plus driving in from way outside the city.'" },
       { id: 4, q: "What time range did the person ask for as an alternative?", options: ["Something in the early morning around 6:00 AM", "Something closer to noon", "An evening flight after 6:00 PM", "Any time on Thursday"], correct: 1, explanation: "The speaker says they 'immediately asked if there was anything closer to noon.'" },
       { id: 5, q: "What alternate departure time was looked up?", options: ["11:30 AM on Wednesday", "1:45 PM on Wednesday", "3:00 PM on Tuesday", "12:00 PM on Thursday"], correct: 1, explanation: "The host says 'checking for a 1:45 PM option seemed like the next logical step.'" },
-    ],
-  },
-  {
-    title: "Part 2 — Conflicts, Compromise, and Takeaways",
-    transcript: `Man With Deep Voice: Looking up alternate flights is always a bit of a gamble. You never know if there will be a slot that fits just right. Luckily, there was that 1:45 PM departure on Wednesday.
-
-Upbeat Woman: That sounded like the perfect solution at first. It gave me enough time in the morning, avoided the crazy rush, and I figured I could relax a bit. But then, out of nowhere, I remembered my lunch meeting. Suddenly, that plan was toast.
-
-Man With Deep Voice: It's almost comical how our schedules can blindside us mid-conversation. You think you're all set, then another commitment jumps out. It really highlights how double-checking your calendar before you finalize anything is crucial.
-
-Man With Deep Voice: When those overlapping commitments pop up, it can feel like you're juggling a dozen balls at once. You thought you'd found the solution, but now you're back to square one.
-
-Upbeat Woman: It's almost a game of whack-a-mole. Solve one problem, another appears. My lunch meeting at 1:00 PM made the 1:45 flight impossible. That realization forced me to reconsider the early morning flight, even though it wasn't my first choice.
-
-Man With Deep Voice: Sometimes you just have to go with the option that hurts the least. The 8:30 AM flight might be rough, but at least it won't conflict with anything else. I made the switch for you, and suddenly your schedule looked a lot clearer.
-
-Man With Deep Voice: Making these last-minute changes isn't just about logistics—it can feel stressful, even overwhelming. You're trading convenience for peace of mind, and it's rarely a straightforward trade.
-
-Upbeat Woman: The ripple effect is real. Adjusting my travel meant rearranging my morning routines and bracing for a long drive before dawn. Still, it's better than risking a missed meeting or a frantic dash to the airport.
-
-Man With Deep Voice: It's all about finding the least disruptive path. Sometimes that means waking up early, but at least you know you'll make your commitments without drama. It helps to have someone walk through the options with you, even if it's just over the phone.
-
-Man With Deep Voice: Let's wrap up with what we've learned. First, always check your calendar for hidden commitments before changing travel plans. Second, be ready to compromise—sometimes the ideal flight isn't available. Third, the emotional toll of rescheduling is real, so give yourself time to process.
-
-Upbeat Woman: If there's one thing listeners should do next, it's set a reminder to review their schedule before booking any flight—especially when juggling meetings or long drives. It saves headaches and ensures you won't have to scramble last-minute.
-
-Man With Deep Voice: Thanks for joining us, Mr. Davis. And thanks to everyone listening—until next time, travel smart and double-check those schedules!`,
-    questions: [
       { id: 6, q: "Why was the 1:45 PM flight ultimately rejected?", options: ["It was more expensive than the morning flight", "It was already fully booked", "A lunch meeting at 1:00 PM made it impossible to catch", "The airport was too far to reach by that time"], correct: 2, explanation: "The speaker says 'My lunch meeting at 1:00 PM made the 1:45 flight impossible.'" },
       { id: 7, q: "What metaphor does the host use to describe the scheduling problem?", options: ["A jigsaw puzzle with missing pieces", "A game of whack-a-mole", "A rolling dice with no clear outcome", "A house of cards about to collapse"], correct: 1, explanation: "The speaker says 'It's almost a game of whack-a-mole. Solve one problem, another appears.'" },
       { id: 8, q: "Which flight was finally booked after all the deliberation?", options: ["Tuesday at 4:15 PM", "Wednesday at 8:30 AM", "Wednesday at 1:45 PM", "Thursday at 8:30 AM"], correct: 1, explanation: "The host says 'I made the switch for you' referring to the 8:30 AM flight." },
@@ -220,26 +181,13 @@ function OptionButton({ letter, text, isSelected, isCorrect, isIncorrect, disabl
 function ListeningAudioPlayer() {
   const audioRef = useRef(null);
   const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [muted, setMuted] = useState(false);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-    const onTime = () => {
-      if (audio.duration) setProgress((audio.currentTime / audio.duration) * 100);
-    };
-    const onLoaded = () => setDuration(audio.duration);
     const onEnd = () => setPlaying(false);
-    audio.addEventListener("timeupdate", onTime);
-    audio.addEventListener("loadedmetadata", onLoaded);
     audio.addEventListener("ended", onEnd);
-    return () => {
-      audio.removeEventListener("timeupdate", onTime);
-      audio.removeEventListener("loadedmetadata", onLoaded);
-      audio.removeEventListener("ended", onEnd);
-    };
+    return () => audio.removeEventListener("ended", onEnd);
   }, []);
 
   const togglePlay = () => {
@@ -250,28 +198,6 @@ function ListeningAudioPlayer() {
     setPlaying(!playing);
   };
 
-  const seek = (e) => {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    audio.currentTime = pct * duration;
-  };
-
-  const toggleMute = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.muted = !audio.muted;
-    setMuted(!muted);
-  };
-
-  const fmt = (s) => {
-    if (!s || isNaN(s)) return "0:00";
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60);
-    return `${m}:${sec.toString().padStart(2, "0")}`;
-  };
-
   return (
     <>
       <audio ref={audioRef} src={LISTENING_AUDIO} preload="metadata" />
@@ -279,16 +205,7 @@ function ListeningAudioPlayer() {
         <button onClick={togglePlay} className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors cursor-pointer border-none">
           {playing ? <Pause size={16} className="text-white" /> : <Play size={16} className="text-white ml-0.5" />}
         </button>
-        <span className="text-[11px] text-white/50 w-10 text-right font-mono">{fmt(audioRef.current?.currentTime)}</span>
-        <div className="flex-1 py-2 cursor-pointer" onClick={seek}>
-          <div className="h-1.5 bg-white/20 rounded-full overflow-hidden group">
-            <div className="h-full bg-white rounded-full transition-[width] duration-100 group-hover:bg-amber-400" style={{ width: `${progress}%` }} />
-          </div>
-        </div>
-        <span className="text-[11px] text-white/50 w-10 font-mono">{fmt(duration)}</span>
-        <button onClick={toggleMute} className="hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer border-none bg-transparent">
-          {muted ? <VolumeX size={16} className="text-white/60" /> : <Volume2 size={16} className="text-white/60" />}
-        </button>
+        <span className="text-[13px] text-white/70">Flight Change Dialogue</span>
       </div>
     </>
   );
@@ -301,7 +218,6 @@ function ListeningSection({ qIdx, answers, dispatch }) {
   const letters = ["A", "B", "C", "D"];
   const section = listeningSections[q.sectionIdx];
   const showAudio = q.localIdx === 0;
-  const showTranscript = q.localIdx === 0;
 
   return (
     <div>
@@ -312,23 +228,6 @@ function ListeningSection({ qIdx, answers, dispatch }) {
         <p className="text-[13px] font-medium text-slate-700">{section.title}</p>
       </div>
       {showAudio && <ListeningAudioPlayer />}
-      {showTranscript && section.transcript && (
-        <details className="mb-4">
-          <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-700 select-none">Show transcript</summary>
-          <div className="mt-3 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 max-h-60 overflow-y-auto">
-            {section.transcript.split("\n\n").map((para, i) => {
-              const [speaker, ...rest] = para.split(": ");
-              const isDeep = speaker.includes("Deep Voice");
-              return (
-                <div key={i} className="mb-3 last:mb-0">
-                  <span className={`text-xs font-semibold ${isDeep ? "text-slate-700" : "text-amber-700"}`}>{speaker}:</span>
-                  <span className="text-sm text-slate-600 ml-1">{rest.join(": ")}</span>
-                </div>
-              );
-            })}
-          </div>
-        </details>
-      )}
       <p className="text-[15px] font-medium text-slate-900 leading-relaxed mb-5">{q.q}</p>
       <div className="flex flex-col gap-2 mb-4">
         {q.options.map((opt, i) => (
