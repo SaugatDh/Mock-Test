@@ -14,12 +14,7 @@ const badgeStyles = [
 
 // TODO: Replace with API data — GET /api/writing/tasks
 const tasks = [
-  { id: "gen-1", title: "General Writing Mock Test 1" },
-  { id: "gen-2", title: "General Writing Mock Test 2" },
-  { id: "gen-3", title: "General Writing Mock Test 3" },
   { id: "aca-1", title: "Academic Writing Mock Test 1" },
-  { id: "aca-2", title: "Academic Writing Mock Test 2" },
-  { id: "aca-3", title: "Academic Writing Mock Test 3" },
 ];
 
 export default function WritingTasks() {

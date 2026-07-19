@@ -15,11 +15,6 @@ const badgeStyles = [
 // TODO: Replace with API data — GET /api/reading/tasks
 const tasks = [
   { id: "ac-1", title: "Academic Reading Test 1" },
-  { id: "ac-2", title: "Academic Reading Test 2" },
-  { id: "ac-3", title: "Academic Reading Test 3" },
-  { id: "gt-1", title: "General Training Reading Test 1" },
-  { id: "gt-2", title: "General Training Reading Test 2" },
-  { id: "gt-3", title: "General Training Reading Test 3" },
 ];
 
 export default function ReadingTasks() {

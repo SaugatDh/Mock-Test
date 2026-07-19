@@ -52,7 +52,7 @@ function FaqItem({ q, a }) {
 
 export default function Help() {
   return (
-    <Layout title="Help">
+    <Layout>
       <div className="max-w-3xl mx-auto space-y-6">
         <Card className="border-slate-200 rounded-2xl p-6">
           <h2 className="text-base font-semibold text-slate-900 mb-1">

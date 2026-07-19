@@ -11,37 +11,13 @@ const tagColors = {
   language: "bg-violet-50 text-violet-700",
 };
 
-const lessons = [
-  { title: "Task 2 Exam Format", tags: ["core", "exam skills"] },
-  { title: "Opinion Essays", tags: ["core", "exam skills"] },
-  { title: "Discussion Essays", tags: ["core", "exam skills"] },
-  { title: "Problem and Solution Essays", tags: ["core", "exam skills"] },
-  {
-    title: "Advantages and Disadvantages Essays",
-    tags: ["core", "exam skills"],
-  },
-  { title: "Two-Part Question Essays", tags: ["core", "exam skills"] },
-  { title: "Brainstorming", tags: ["supplementary", "ideas"] },
-  { title: "Argument Development", tags: ["supplementary", "ideas"] },
-  {
-    title: "Introduction Skills",
-    tags: ["supplementary", "exam skills"],
-  },
-  { title: "Logic Checks", tags: ["supplementary", "exam skills"] },
-  { title: "Paraphrasing", tags: ["supplementary", "language"] },
-  {
-    title: "Grammatical Range and Accuracy",
-    tags: ["supplementary", "language"],
-  },
-  { title: "Lexical Resource", tags: ["supplementary", "language"] },
-  { title: "Conclusion Polishing", tags: ["supplementary", "exam skills"] },
-];
+const lessons = [];
 
 export default function Lessons() {
   const [tab, setTab] = useState("Writing Task 2");
 
   return (
-    <Layout title="Lessons">
+    <Layout>
       <Card className="border-slate-200 rounded-2xl p-5">
         <div className="inline-flex bg-slate-100 rounded-lg p-1 mb-6 flex-wrap">
           {[

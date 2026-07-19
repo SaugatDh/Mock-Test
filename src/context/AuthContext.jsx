@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useCallback, useMemo } from "react";
 
 const AuthContext = createContext();
 
@@ -14,23 +14,25 @@ export function AuthProvider({ children }) {
     return saved ? JSON.parse(saved) : null;
   });
 
-  function login(email, password) {
+  const login = useCallback((email, password) => {
     const found = USERS.find((u) => u.email === email && u.password === password);
     if (!found) return false;
     const userData = { email: found.email, name: found.name, role: found.role };
     setUser(userData);
     localStorage.setItem("emt_user", JSON.stringify(userData));
     return true;
-  }
+  }, []);
 
-  function logout() {
+  const logout = useCallback(() => {
     setUser(null);
     localStorage.removeItem("emt_user");
     localStorage.removeItem("emt_reports");
-  }
+  }, []);
+
+  const value = useMemo(() => ({ user, login, logout }), [user, login, logout]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

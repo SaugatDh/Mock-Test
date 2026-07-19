@@ -15,11 +15,6 @@ const badgeStyles = [
 // TODO: Replace with API data — GET /api/listening/tasks
 const tasks = [
   { id: "a-1", title: "Listening Test 1" },
-  { id: "a-2", title: "Listening Test 2" },
-  { id: "a-3", title: "Listening Test 3" },
-  { id: "m-1", title: "Listening Practice Test 1" },
-  { id: "m-2", title: "Listening Practice Test 2" },
-  { id: "m-3", title: "Listening Practice Test 3" },
 ];
 
 export default function ListeningTasks() {

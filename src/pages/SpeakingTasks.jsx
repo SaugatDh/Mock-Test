@@ -14,10 +14,9 @@ const badgeStyles = [
 ];
 
 // TODO: Replace with API data — GET /api/speaking/tasks
-const tasks = Array.from({ length: 6 }, (_, i) => ({
-  id: i + 1,
-  title: `Complete Speaking Mock Test ${i + 1}`,
-}));
+const tasks = [
+  { id: 1, title: "Complete Speaking Mock Test 1" },
+];
 
 export default function SpeakingTasks() {
   const navigate = useNavigate();
