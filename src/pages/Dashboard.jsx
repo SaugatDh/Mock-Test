@@ -112,12 +112,14 @@ export default function Dashboard() {
         </div>
 
         {/* Start Full Test */}
-        <button
-          onClick={() => navigate("/test")}
-          className="w-full py-2.5 px-5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity cursor-pointer border-none"
-        >
-          Start Full Test
-        </button>
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={() => navigate("/test")}
+            className="w-full max-w-sm py-2.5 px-5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity cursor-pointer border-none"
+          >
+            Start Full Test
+          </button>
+        </div>
       </div>
     </Layout>
   );
