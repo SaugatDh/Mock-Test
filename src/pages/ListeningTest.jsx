@@ -234,14 +234,10 @@ function AudioPlayer({ url }) {
         <span className="text-[11px] text-white/50 w-10 text-right font-mono">
           {format(audioRef.current?.currentTime)}
         </span>
-        <div
-          className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden cursor-pointer group"
-          onClick={seek}
-        >
-          <div
-            className="h-full bg-white rounded-full transition-[width] duration-100 group-hover:bg-amber-400"
-            style={{ width: `${progress}%` }}
-          />
+        <div className="flex-1 py-2 cursor-pointer" onClick={seek}>
+          <div className="h-1.5 bg-white/20 rounded-full overflow-hidden group">
+            <div className="h-full bg-white rounded-full transition-[width] duration-100 group-hover:bg-amber-400" style={{ width: `${progress}%` }} />
+          </div>
         </div>
         <span className="text-[11px] text-white/50 w-10 font-mono">
           {format(duration)}
