@@ -168,7 +168,7 @@ export default function Layout({ children }) {
 
       {/* Main content */}
       <main className="pt-14">
-        <div className="max-w-[1080px] mx-auto px-6 py-6">{children}</div>
+        <div className="max-w-[768px] mx-auto px-6 py-6">{children}</div>
       </main>
     </div>
   );
