@@ -5,7 +5,7 @@ import { User, Settings, LogOut, Menu, X } from "lucide-react";
 
 const navLinks = [
   { label: "Home", to: "/" },
-  { label: "Practice", to: "/test" },
+  { label: "Test", to: "/test" },
   { label: "Account", to: "/account" },
 ];
 

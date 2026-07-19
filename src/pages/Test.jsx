@@ -681,6 +681,19 @@ export default function Test() {
     };
   }, []);
 
+  // Fullscreen + right-click disable during test
+  useEffect(() => {
+    if (state.screen === "test") {
+      document.documentElement.requestFullscreen?.().catch(() => {});
+      const block = (e) => e.preventDefault();
+      document.addEventListener("contextmenu", block);
+      return () => {
+        document.removeEventListener("contextmenu", block);
+        if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+      };
+    }
+  }, [state.screen]);
+
   const currentTotal = totalBySection[state.section];
 
   // ── NAVIGATION ──
