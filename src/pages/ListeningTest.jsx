@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/Layout";
 import { useNavigate } from "react-router-dom";
-import { CheckCircle, Play, Pause, Volume2 } from "lucide-react";
+import { CheckCircle, Play, Pause, Volume2, VolumeX } from "lucide-react";
+
+const AUDIO_URL =
+  "https://cdn.ng-resource.com/product/resource/notegpt/podcast/2026/07/19/podcast_d3aa244b-7fbb-4a8d-9484-c0e07b5665aa-1784469584.mp3";
 
 const sections = [
   {
@@ -20,15 +23,60 @@ Upbeat Woman: Right, and my first reaction was basically dread. The idea of waki
 
 Man With Deep Voice: That's such a relatable feeling. When you're balancing travel with your home life and commute, those early flights look great on paper, but reality hits hard. So, checking for a 1:45 PM option seemed like the next logical step.`,
     questions: [
-      { id: 1, q: "What was the original flight time?", options: ["Tuesday 2:15 PM", "Tuesday 4:15 PM", "Wednesday 8:30 AM", "Wednesday 1:45 PM"] },
-      { id: 2, q: "What was Mr. Davis's first reaction to the 8:30 AM flight?", options: ["Excitement", "Indifference", "Dread", "Confusion"] },
-      { id: 3, q: "Why did Mr. Davis not like the early morning flight?", options: ["Too expensive", "Waking up early and driving from outside the city", "Airport too far", "No luggage ready"] },
-      { id: 4, q: "What alternative time did Mr. Davis ask for?", options: ["6:00 AM", "10:00 AM", "Closer to noon", "Evening flight"] },
-      { id: 5, q: "What time was the alternate flight that was looked up?", options: ["11:30 AM", "1:45 PM", "3:00 PM", "5:15 PM"] },
+      {
+        id: 1,
+        q: "What was the original flight time before rescheduling?",
+        options: [
+          "Tuesday at 2:15 PM",
+          "Tuesday at 4:15 PM",
+          "Wednesday at 8:30 AM",
+          "Wednesday at 1:45 PM",
+        ],
+      },
+      {
+        id: 2,
+        q: "What was the first reaction to the proposed 8:30 AM flight?",
+        options: [
+          "Excitement about arriving early",
+          "Indifference — it didn't matter",
+          "Dread at the idea of waking up so early",
+          "Confusion about the departure date",
+        ],
+      },
+      {
+        id: 3,
+        q: "What two factors made the early flight unappealing?",
+        options: [
+          "High ticket price and no luggage ready",
+          "Waking up early and driving in from outside the city",
+          "Long airport queue and traffic jam",
+          "No food available and cold weather",
+        ],
+      },
+      {
+        id: 4,
+        q: "What time range did the person ask for as an alternative?",
+        options: [
+          "Something in the early morning around 6:00 AM",
+          "Something closer to noon",
+          "An evening flight after 6:00 PM",
+          "Any time on Thursday",
+        ],
+      },
+      {
+        id: 5,
+        q: "What alternate departure time was looked up?",
+        options: [
+          "11:30 AM on Wednesday",
+          "1:45 PM on Wednesday",
+          "3:00 PM on Tuesday",
+          "12:00 PM on Thursday",
+        ],
+      },
     ],
   },
   {
-    title: "Part 2 — Overlapping Commitments and Final Decision",
+    title: "Part 2 — Conflicts, Compromise, and Takeaways",
     transcript: `Man With Deep Voice: Looking up alternate flights is always a bit of a gamble. You never know if there will be a slot that fits just right. Luckily, there was that 1:45 PM departure on Wednesday.
 
 Upbeat Woman: That sounded like the perfect solution at first. It gave me enough time in the morning, avoided the crazy rush, and I figured I could relax a bit. But then, out of nowhere, I remembered my lunch meeting. Suddenly, that plan was toast.
@@ -53,26 +101,176 @@ Upbeat Woman: If there's one thing listeners should do next, it's set a reminder
 
 Man With Deep Voice: Thanks for joining us, Mr. Davis. And thanks to everyone listening—until next time, travel smart and double-check those schedules!`,
     questions: [
-      { id: 6, q: "Why was the 1:45 PM flight ruled out?", options: ["It was too expensive", "It was fully booked", "A lunch meeting at 1:00 PM conflicted", "The airport was closed"] },
-      { id: 7, q: "What does the host compare the scheduling problem to?", options: ["A jigsaw puzzle", "A game of whack-a-mole", "A rolling dice", "A burning fire"] },
-      { id: 8, q: "Which flight was finally booked?", options: ["Tuesday 4:15 PM", "Wednesday 8:30 AM", "Wednesday 1:45 PM", "Thursday 8:30 AM"] },
-      { id: 9, q: "What is the first tip given at the end?", options: ["Book the cheapest flight", "Check your calendar for hidden commitments", "Always choose morning flights", "Ask a friend to book for you"] },
-      { id: 10, q: "What is the recommended action for listeners?", options: ["Book flights only on Tuesdays", "Set a reminder to review schedule before booking", "Avoid lunch meetings on travel days", "Never take early morning flights"] },
+      {
+        id: 6,
+        q: "Why was the 1:45 PM flight ultimately rejected?",
+        options: [
+          "It was more expensive than the morning flight",
+          "It was already fully booked",
+          "A lunch meeting at 1:00 PM made it impossible to catch",
+          "The airport was too far to reach by that time",
+        ],
+      },
+      {
+        id: 7,
+        q: "What metaphor does the host use to describe the scheduling problem?",
+        options: [
+          "A jigsaw puzzle with missing pieces",
+          "A game of whack-a-mole",
+          "A rolling dice with no clear outcome",
+          "A house of cards about to collapse",
+        ],
+      },
+      {
+        id: 8,
+        q: "Which flight was finally booked after all the deliberation?",
+        options: [
+          "Tuesday at 4:15 PM",
+          "Wednesday at 8:30 AM",
+          "Wednesday at 1:45 PM",
+          "Thursday at 8:30 AM",
+        ],
+      },
+      {
+        id: 9,
+        q: "What is the first piece of advice given at the end of the podcast?",
+        options: [
+          "Book the cheapest available flight",
+          "Always check your calendar for hidden commitments before changing plans",
+          "Prefer morning flights over afternoon ones",
+          "Ask a friend to help with your booking",
+        ],
+      },
+      {
+        id: 10,
+        q: "What specific action is recommended for listeners going forward?",
+        options: [
+          "Only book flights on Tuesdays for the best deals",
+          "Set a reminder to review schedule before booking any flight",
+          "Cancel all lunch meetings on travel days",
+          "Avoid early morning flights under all circumstances",
+        ],
+      },
     ],
   },
 ];
 
-const answers = { 1: 1, 2: 2, 3: 1, 4: 2, 5: 1, 6: 2, 7: 1, 8: 1, 9: 1, 10: 1 };
+const answers = { 1: 1, 2: 2, 3: 1, 4: 1, 5: 1, 6: 2, 7: 1, 8: 1, 9: 1, 10: 1 };
+
+function AudioPlayer({ url }) {
+  const audioRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [muted, setMuted] = useState(false);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const onTime = () => {
+      if (audio.duration) setProgress((audio.currentTime / audio.duration) * 100);
+    };
+    const onLoaded = () => setDuration(audio.duration);
+    const onEnd = () => setPlaying(false);
+
+    audio.addEventListener("timeupdate", onTime);
+    audio.addEventListener("loadedmetadata", onLoaded);
+    audio.addEventListener("ended", onEnd);
+    return () => {
+      audio.removeEventListener("timeupdate", onTime);
+      audio.removeEventListener("loadedmetadata", onLoaded);
+      audio.removeEventListener("ended", onEnd);
+    };
+  }, []);
+
+  const togglePlay = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (playing) {
+      audio.pause();
+    } else {
+      audio.play().catch(() => {});
+    }
+    setPlaying(!playing);
+  };
+
+  const seek = (e) => {
+    const audio = audioRef.current;
+    if (!audio || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = pct * duration;
+  };
+
+  const toggleMute = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = !audio.muted;
+    setMuted(!muted);
+  };
+
+  const format = (s) => {
+    if (!s || isNaN(s)) return "0:00";
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2, "0")}`;
+  };
+
+  return (
+    <>
+      <audio ref={audioRef} src={url} preload="metadata" />
+      <div className="bg-slate-900 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
+        <button
+          onClick={togglePlay}
+          className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors cursor-pointer border-none"
+        >
+          {playing ? (
+            <Pause size={16} className="text-white" />
+          ) : (
+            <Play size={16} className="text-white ml-0.5" />
+          )}
+        </button>
+        <span className="text-[11px] text-white/50 w-10 text-right font-mono">
+          {format(audioRef.current?.currentTime)}
+        </span>
+        <div
+          className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden cursor-pointer group"
+          onClick={seek}
+        >
+          <div
+            className="h-full bg-white rounded-full transition-[width] duration-100 group-hover:bg-amber-400"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <span className="text-[11px] text-white/50 w-10 font-mono">
+          {format(duration)}
+        </span>
+        <button
+          onClick={toggleMute}
+          className="hover:bg-white/10 rounded-lg p-1 transition-colors cursor-pointer border-none bg-transparent"
+        >
+          {muted ? (
+            <VolumeX size={16} className="text-white/60" />
+          ) : (
+            <Volume2 size={16} className="text-white/60" />
+          )}
+        </button>
+      </div>
+    </>
+  );
+}
 
 export default function ListeningTest() {
   const [sectionIdx, setSectionIdx] = useState(0);
   const [responses, setResponses] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(null);
-  const [playing, setPlaying] = useState(false);
   const navigate = useNavigate();
   const section = sections[sectionIdx];
-  const allAnswered = sections.flatMap((s) => s.questions).every((q) => responses[q.id] !== undefined);
+  const allAnswered = sections
+    .flatMap((s) => s.questions)
+    .every((q) => responses[q.id] !== undefined);
 
   const handleSubmit = useCallback(() => {
     let correct = 0;
@@ -80,7 +278,18 @@ export default function ListeningTest() {
     Object.entries(answers).forEach(([id, ans]) => {
       if (responses[Number(id)] === ans) correct++;
     });
-    const band = correct === total ? 9.0 : correct >= total * 0.89 ? 8.0 : correct >= total * 0.78 ? 7.0 : correct >= total * 0.67 ? 6.0 : correct >= total * 0.56 ? 5.0 : 4.0;
+    const band =
+      correct === total
+        ? 9.0
+        : correct >= total * 0.89
+          ? 8.0
+          : correct >= total * 0.78
+            ? 7.0
+            : correct >= total * 0.67
+              ? 6.0
+              : correct >= total * 0.56
+                ? 5.0
+                : 4.0;
     const s = { overall: band, correct, total };
     setScore(s);
     setSubmitted(true);
@@ -98,17 +307,25 @@ export default function ListeningTest() {
             <div className="h-14 w-14 rounded-full bg-teal-500 text-white flex items-center justify-center mx-auto mb-3">
               <CheckCircle size={28} />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900">Test Complete</h2>
-            <p className="text-sm text-slate-500">Listening — Flight Change Dialogue</p>
+            <h2 className="text-xl font-semibold text-slate-900">
+              Test Complete
+            </h2>
+            <p className="text-sm text-slate-500">
+              Listening — Flight Change Dialogue
+            </p>
           </div>
 
           <div className="flex items-center justify-center gap-8 mb-6">
             <div className="text-center">
-              <div className="text-4xl font-bold text-slate-900">{score.overall}</div>
+              <div className="text-4xl font-bold text-slate-900">
+                {score.overall}
+              </div>
               <div className="text-xs text-slate-400 mt-1">Overall Band</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-semibold text-slate-800">{score.correct}/{score.total}</div>
+              <div className="text-2xl font-semibold text-slate-800">
+                {score.correct}/{score.total}
+              </div>
               <div className="text-xs text-slate-400 mt-1">Correct</div>
             </div>
           </div>
@@ -117,8 +334,13 @@ export default function ListeningTest() {
             {sections.flatMap((s) => s.questions).map((q) => {
               const isCorrect = responses[q.id] === answers[q.id];
               return (
-                <div key={q.id} className={`flex items-start gap-3 rounded-lg px-4 py-2.5 ${isCorrect ? "bg-teal-50" : "bg-red-50"}`}>
-                  <span className={`text-xs font-medium mt-0.5 ${isCorrect ? "text-teal-600" : "text-red-600"}`}>
+                <div
+                  key={q.id}
+                  className={`flex items-start gap-3 rounded-lg px-4 py-2.5 ${isCorrect ? "bg-teal-50" : "bg-red-50"}`}
+                >
+                  <span
+                    className={`text-xs font-medium mt-0.5 ${isCorrect ? "text-teal-600" : "text-red-600"}`}
+                  >
                     {isCorrect ? "✓" : "✗"}
                   </span>
                   <div className="min-w-0">
@@ -135,8 +357,24 @@ export default function ListeningTest() {
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" className="flex-1" onClick={() => navigate("/")}>Back to Home</Button>
-            <Button className="flex-1 bg-slate-900 hover:bg-slate-800 text-white" onClick={() => { setSubmitted(false); setScore(null); setResponses({}); setSectionIdx(0); }}>Retake Test</Button>
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() => navigate("/")}
+            >
+              Back to Home
+            </Button>
+            <Button
+              className="flex-1 bg-slate-900 hover:bg-slate-800 text-white"
+              onClick={() => {
+                setSubmitted(false);
+                setScore(null);
+                setResponses({});
+                setSectionIdx(0);
+              }}
+            >
+              Retake Test
+            </Button>
           </div>
         </Card>
       </Layout>
@@ -151,30 +389,18 @@ export default function ListeningTest() {
             Section {sectionIdx + 1} of {sections.length}
           </span>
           <span className="text-sm text-slate-500">
-            {Object.keys(responses).length} / {sections.flatMap((s) => s.questions).length} answered
+            {Object.keys(responses).length} /{" "}
+            {sections.flatMap((s) => s.questions).length} answered
           </span>
         </div>
 
         <Card className="border-slate-200 rounded-2xl p-6 mb-4">
-          <h3 className="text-sm font-semibold text-slate-900 mb-3">{section.title}</h3>
+          <h3 className="text-sm font-semibold text-slate-900 mb-3">
+            {section.title}
+          </h3>
 
-          {/* Audio player mockup */}
-          <div className="bg-slate-900 rounded-xl px-4 py-3 mb-4 flex items-center gap-3">
-            <button
-              onClick={() => setPlaying(!playing)}
-              className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors cursor-pointer border-none"
-            >
-              {playing ? <Pause size={16} className="text-white" /> : <Play size={16} className="text-white ml-0.5" />}
-            </button>
-            <div className="flex-1">
-              <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
-                <div className={`h-full bg-white rounded-full transition-all ${playing ? "w-1/3" : "w-0"}`} />
-              </div>
-            </div>
-            <Volume2 size={16} className="text-white/60" />
-          </div>
+          <AudioPlayer url={AUDIO_URL} />
 
-          {/* Transcript */}
           <details className="group mb-4">
             <summary className="text-xs text-slate-500 cursor-pointer hover:text-slate-700 select-none">
               Show transcript
@@ -185,10 +411,14 @@ export default function ListeningTest() {
                 const isDeep = speaker.includes("Deep Voice");
                 return (
                   <div key={i} className="mb-3 last:mb-0">
-                    <span className={`text-xs font-semibold ${isDeep ? "text-slate-700" : "text-amber-700"}`}>
+                    <span
+                      className={`text-xs font-semibold ${isDeep ? "text-slate-700" : "text-amber-700"}`}
+                    >
                       {speaker}:
                     </span>
-                    <span className="text-sm text-slate-600 ml-1">{rest.join(": ")}</span>
+                    <span className="text-sm text-slate-600 ml-1">
+                      {rest.join(": ")}
+                    </span>
                   </div>
                 );
               })}
@@ -215,12 +445,18 @@ export default function ListeningTest() {
                         type="radio"
                         name={`q-${q.id}`}
                         checked={responses[q.id] === oi}
-                        onChange={() => setResponses((r) => ({ ...r, [q.id]: oi }))}
+                        onChange={() =>
+                          setResponses((r) => ({ ...r, [q.id]: oi }))
+                        }
                         className="sr-only"
                       />
-                      <span className={`h-5 w-5 rounded-full border-2 flex items-center justify-center text-xs ${
-                        responses[q.id] === oi ? "border-white text-white" : "border-slate-300 text-transparent"
-                      }`}>
+                      <span
+                        className={`h-5 w-5 rounded-full border-2 flex items-center justify-center text-xs ${
+                          responses[q.id] === oi
+                            ? "border-white text-white"
+                            : "border-slate-300 text-transparent"
+                        }`}
+                      >
                         {String.fromCharCode(65 + oi)}
                       </span>
                       <span className="text-sm">{opt}</span>
@@ -233,19 +469,30 @@ export default function ListeningTest() {
         </Card>
 
         <div className="flex justify-between gap-3">
-          <Button variant="outline" onClick={() => navigate("/")}>Cancel</Button>
+          <Button variant="outline" onClick={() => navigate("/")}>
+            Cancel
+          </Button>
           <div className="flex gap-2">
             {sectionIdx < sections.length - 1 && (
-              <Button variant="outline" onClick={() => setSectionIdx((i) => i + 1)}>
+              <Button
+                variant="outline"
+                onClick={() => setSectionIdx((i) => i + 1)}
+              >
                 Next Section
               </Button>
             )}
             {allAnswered ? (
-              <Button className="bg-slate-900 hover:bg-slate-800 text-white" onClick={handleSubmit}>
+              <Button
+                className="bg-slate-900 hover:bg-slate-800 text-white"
+                onClick={handleSubmit}
+              >
                 Submit Test
               </Button>
             ) : sectionIdx < sections.length - 1 ? (
-              <Button variant="outline" onClick={() => setSectionIdx((i) => i + 1)}>
+              <Button
+                variant="outline"
+                onClick={() => setSectionIdx((i) => i + 1)}
+              >
                 Next
               </Button>
             ) : null}
