@@ -398,10 +398,10 @@ export default function Account() {
                   </div>
                 </div>
 
-                <div className="mt-8">
+                <div className="flex justify-end mt-8">
                   <button
                     onClick={handleSignOut}
-                    className="w-full px-5 py-2.5 bg-red-500 text-white text-sm font-medium rounded-lg hover:opacity-90 cursor-pointer border-none"
+                    className="px-3 py-1.5 text-[13px] font-medium bg-red-500 text-white border border-red-500 rounded-lg hover:opacity-90 cursor-pointer"
                   >
                     Sign Out
                   </button>
