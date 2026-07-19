@@ -115,7 +115,7 @@ export default function Dashboard() {
         <div className="mb-8">
           <button
             onClick={() => navigate("/test")}
-            className="w-full max-w-[200px] py-2 px-4 bg-slate-900 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity cursor-pointer border-none"
+            className="w-full max-w-[170px] py-2 px-4 bg-slate-900 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity cursor-pointer border-none"
           >
             Start Full Test
           </button>
