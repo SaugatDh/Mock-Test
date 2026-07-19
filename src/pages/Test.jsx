@@ -407,99 +407,20 @@ function SpeakingSection({ qIdx, recordings, recBlobUrls, reviewed, onToggleReco
 
 // ── RESULTS VIEW ──
 function ResultsView({ state, dispatch, navigate }) {
-  const lc = Object.values(state.answers.listening).filter((v, i) => v === allListeningQ[i]?.correct).length;
-  const lt = allListeningQ.length;
-  const rc = Object.values(state.answers.reading).filter((v, i) => v === allReadingQ[i]?.correct).length;
-  const rt = allReadingQ.length;
-  const wd = writingTasks.filter((_, i) => (state.writingTexts[i] || "").trim().length > 20).length;
-  const wc = writingTasks.length;
-  const sd = speakingTasks.filter((_, i) => state.recordings[i]).length;
-  const sc = speakingTasks.length;
-  const total = lc + rc + wd + sd;
-  const totalP = lt + rt + wc + sc;
-  const pct = Math.round((total / totalP) * 100);
-
-  let level, msg;
-  if (pct >= 90) { level = "Advanced (C1–C2)"; msg = "Outstanding command of English across all four skills."; }
-  else if (pct >= 75) { level = "Upper-Intermediate (B2)"; msg = "Strong performance with solid skills in most areas."; }
-  else if (pct >= 55) { level = "Intermediate (B1)"; msg = "Good foundation with room for targeted improvement."; }
-  else if (pct >= 35) { level = "Elementary (A2)"; msg = "Basic skills present — focused practice will help."; }
-  else { level = "Beginner (A1)"; msg = "Keep practising — structured study will build your foundation."; }
-
-  const secs = useMemo(() => [
-    { name: "Listening", e: lc, t: lt, p: Math.round((lc / lt) * 100) },
-    { name: "Reading", e: rc, t: rt, p: Math.round((rc / rt) * 100) },
-    { name: "Writing", e: wd, t: wc, p: Math.round((wd / wc) * 100) },
-    { name: "Speaking", e: sd, t: sc, p: Math.round((sd / sc) * 100) },
-  ], [lc, lt, rc, rt, wd, wc, sd, sc]);
-
-  function handleSaveAndReview() {
-    const reports = JSON.parse(localStorage.getItem("emt_reports") || "[]");
-    reports.push({
-      id: Date.now(),
-      date: new Date().toISOString(),
-      scores: { listening: lc, reading: rc, writing: wd, speaking: sd },
-      totals: { listening: lt, reading: rt, writing: wc, speaking: sc },
-      percentage: pct,
-      level,
-    });
-    localStorage.setItem("emt_reports", JSON.stringify(reports));
-    dispatch({ type: "SHOW_REVIEW" });
-  }
-
   return (
     <div className="pb-16">
-      <div className="text-center py-12">
-        <div className="text-[72px] font-bold tracking-tight leading-none text-slate-900">
-          {pct}<span className="text-[28px] font-medium text-slate-400">%</span>
+      <div className="text-center py-20">
+        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-5">
+          <span className="text-2xl">⏳</span>
         </div>
-        <div className="text-base font-semibold text-slate-900 mt-2">{level}</div>
-        <div className="text-sm text-slate-500 mt-1 max-w-[440px] mx-auto">{msg}</div>
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Pending Result</h2>
+        <p className="text-sm text-slate-500 max-w-[340px] mx-auto">
+          Your test has been submitted. Results will be available shortly.
+        </p>
       </div>
-
-      <div className="border border-slate-200 rounded-lg overflow-hidden mb-4">
-        <div className="px-5 py-3.5 border-b border-slate-200 text-sm font-semibold text-slate-900">
-          Section Breakdown
-        </div>
-        {secs.map((s) => (
-          <div key={s.name} className="flex items-center justify-between px-5 py-3.5 border-b border-slate-200 last:border-b-0">
-            <div className="flex-1 mr-5">
-              <div className="text-[13px] font-medium text-slate-900 mb-1.5">{s.name}</div>
-              <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-slate-900 rounded-full transition-all" style={{ width: `${s.p}%` }} />
-              </div>
-            </div>
-            <div className="text-[13px] font-semibold text-slate-500 whitespace-nowrap">{s.e}/{s.t}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="border border-slate-200 rounded-lg overflow-hidden mb-4">
-        <div className="px-5 py-3 bg-slate-50 border-b border-slate-200 text-[13px] font-semibold text-slate-900">Writing Submissions</div>
-        <div className="p-5 text-[13px] text-slate-600 leading-relaxed">
-          {writingTasks.map((t, i) => {
-            const w = (state.writingTexts[i] || "").trim().split(/\s+/).filter(Boolean).length;
-            return <p key={i} className="mb-2 last:mb-0"><strong className="text-slate-900">{t.type}:</strong> {w > 20 ? `${w} words submitted ✓` : "Not submitted"}</p>;
-          })}
-        </div>
-      </div>
-
-      <div className="border border-slate-200 rounded-lg overflow-hidden mb-6">
-        <div className="px-5 py-3 bg-slate-50 border-b border-slate-200 text-[13px] font-semibold text-slate-900">Speaking Recordings</div>
-        <div className="p-5 text-[13px] text-slate-600 leading-relaxed">
-          {speakingTasks.map((t, i) => {
-            const r = state.recordings[i];
-            return <p key={i} className="mb-2 last:mb-0"><strong className="text-slate-900">{t.title}:</strong> {r ? `Recorded (${fmtTime(r.duration)}) ✓` : "Not recorded"}</p>;
-          })}
-        </div>
-      </div>
-
-      <div className="flex gap-2 justify-center">
-        <button onClick={handleSaveAndReview} className="px-5 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:opacity-90 cursor-pointer border-none">
-          Save & Review
-        </button>
-        <button onClick={() => navigate("/")} className="px-5 py-2.5 border border-slate-200 text-slate-900 text-sm font-medium rounded-lg hover:bg-slate-50 cursor-pointer bg-white">
-          Back to Home
+      <div className="flex justify-center">
+        <button onClick={() => navigate("/")} className="px-6 py-2.5 bg-slate-900 text-white text-sm font-medium rounded-lg hover:opacity-90 cursor-pointer border-none">
+          Go to Home
         </button>
       </div>
     </div>
